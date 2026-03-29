@@ -70,6 +70,7 @@ void ejecutarComando(int id) {
 
 // --- -1: LISTAR COMANDOS ---
 void listarComandosJSON() {
+  Serial.println("JSON_BEGIN");
   Serial.println("{\"commands\":[");
 
   for (int i = 0; i < commandCount; i++) {
@@ -87,6 +88,7 @@ void listarComandosJSON() {
   }
 
   Serial.println("]}");
+  Serial.println("JSON_END");
 }
 
 // --- 0: POSICIÓN NEUTRA ---
