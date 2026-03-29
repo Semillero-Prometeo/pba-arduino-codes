@@ -16,7 +16,7 @@ struct Command {
   CommandFunction fn;
 };
 
-Command commands[] = {{-1, "Listar comandos", listarComandosSerial},
+Command commands[] = {{-1, "Listar comandos", listarComandosJSON},
                       {0, "Posición Neutra", PosicionNeutra},
                       {1, "Modo Manual", modoManualContinuo},
                       {2, "Sorprendido", GestoSorprendido},
@@ -68,15 +68,25 @@ void ejecutarComando(int id) {
   Serial.println(F(" [!] Opción no válida."));
 }
 
-// --- LISTAR COMANDOS ---
-void listarComandosSerial() {
-  Serial.println("COMMANDS_BEGIN");
+// --- -1: LISTAR COMANDOS ---
+void listarComandosJSON() {
+  Serial.println("{\"commands\":[");
+
   for (int i = 0; i < commandCount; i++) {
+    Serial.print("{\"id\":");
     Serial.print(commands[i].id);
-    Serial.print("|");
-    Serial.println(commands[i].name);
+    Serial.print(",\"name\":\"");
+    Serial.print(commands[i].name);
+    Serial.print("\"}");
+
+    if (i < commandCount - 1) {
+      Serial.println(",");
+    } else {
+      Serial.println();
+    }
   }
-  Serial.println("COMMANDS_END");
+
+  Serial.println("]}");
 }
 
 // --- 0: POSICIÓN NEUTRA ---
