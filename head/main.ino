@@ -8,6 +8,30 @@ Adafruit_PWMServoDriver pca = Adafruit_PWMServoDriver();
 #define SERVOMIN 150
 #define SERVOMAX 600
 
+typedef void (*CommandFunction)();
+
+struct Command {
+  int id;
+  const char *name;
+  CommandFunction fn;
+};
+
+Command commands[] = {{-1, "Listar comandos", listarComandosJSON},
+                      {0, "Posición Neutra", PosicionNeutra},
+                      {1, "Modo Manual", modoManualContinuo},
+                      {2, "Sorprendido", GestoSorprendido},
+                      {3, "Furioso", GestoFurioso},
+                      {4, "Feliz", GestoFeliz},
+                      {5, "Parpadeo", GestoParpadeo},
+                      {6, "Guino Izquierdo", GuinoIzquierdo},
+                      {7, "Guino Derecho", GuinoDerecho},
+                      {8, "Dormir", GestoDormir},
+                      {9, "Sospechoso", Sospechoso},
+                      {10, "Risa", Risa},
+                      {11, "Triste", Triste}};
+
+const int commandCount = sizeof(commands) / sizeof(commands[0]);
+
 // --- 0: POSICIÓN NEUTRA ---
 void PosicionNeutra() {
   Serial.println(F("[ESTADO] Neutro (Valores Base)"));
@@ -182,7 +206,6 @@ void mostrarMenu() {
   Serial.print(F("Seleccione una opción: "));
 }
 
-typedef void (*CommandFunction)();
 
 void ejecutarComando(int id) {
   for (int i = 0; i < commandCount; i++) {
@@ -216,28 +239,6 @@ void listarComandosJSON() {
   Serial.println("]}");
   Serial.println("JSON_END");
 }
-
-struct Command {
-  int id;
-  const char *name;
-  CommandFunction fn;
-};
-
-Command commands[] = {{-1, "Listar comandos", listarComandosJSON},
-                      {0, "Posición Neutra", PosicionNeutra},
-                      {1, "Modo Manual", modoManualContinuo},
-                      {2, "Sorprendido", GestoSorprendido},
-                      {3, "Furioso", GestoFurioso},
-                      {4, "Feliz", GestoFeliz},
-                      {5, "Parpadeo", GestoParpadeo},
-                      {6, "Guino Izquierdo", GuinoIzquierdo},
-                      {7, "Guino Derecho", GuinoDerecho},
-                      {8, "Dormir", GestoDormir},
-                      {9, "Sospechoso", Sospechoso},
-                      {10, "Risa", Risa},
-                      {11, "Triste", Triste}};
-
-const int commandCount = sizeof(commands) / sizeof(commands[0]);
 
 void setup() {
   Serial.begin(9600);
