@@ -8,89 +8,6 @@ Adafruit_PWMServoDriver pca = Adafruit_PWMServoDriver();
 #define SERVOMIN 150
 #define SERVOMAX 600
 
-typedef void (*CommandFunction)();
-
-struct Command {
-  int id;
-  const char *name;
-  CommandFunction fn;
-};
-
-Command commands[] = {{-1, "Listar comandos", listarComandosJSON},
-                      {0, "Posición Neutra", PosicionNeutra},
-                      {1, "Modo Manual", modoManualContinuo},
-                      {2, "Sorprendido", GestoSorprendido},
-                      {3, "Furioso", GestoFurioso},
-                      {4, "Feliz", GestoFeliz},
-                      {5, "Parpadeo", GestoParpadeo},
-                      {6, "Guino Izquierdo", GuinoIzquierdo},
-                      {7, "Guino Derecho", GuinoDerecho},
-                      {8, "Dormir", GestoDormir},
-                      {9, "Sospechoso", Sospechoso},
-                      {10, "Risa", Risa},
-                      {11, "Triste", Triste}};
-
-const int commandCount = sizeof(commands) / sizeof(commands[0]);
-
-void setup() {
-  Serial.begin(9600);
-  Serial.setTimeout(50);
-
-  pca.begin();
-  pca.setPWMFreq(50);
-
-  // Posición inicial segura
-  PosicionNeutra();
-
-  Serial.println(F("\n===================================="));
-  Serial.println(F("    SISTEMA OPERATIVO HEAD R-ONE    "));
-  Serial.println(F("===================================="));
-  mostrarMenu();
-}
-
-void loop() {
-  if (Serial.available() > 0) {
-    int opcion = Serial.parseInt();
-
-    ejecutarComando(opcion);
-    limpiarBuffer();
-    mostrarMenu();
-  }
-}
-
-void ejecutarComando(int id) {
-  for (int i = 0; i < commandCount; i++) {
-    if (commands[i].id == id) {
-      commands[i].fn();
-      return;
-    }
-  }
-  Serial.println(F(" [!] Opción no válida."));
-}
-
-// --- -1: LISTAR COMANDOS ---
-void listarComandosJSON() {
-  Serial.println("JSON_BEGIN");
-  Serial.println("{\"commands\":[");
-
-  for (int i = 0; i < commandCount; i++) {
-    Serial.print("{\"id\":");
-    Serial.print(commands[i].id);
-    Serial.print(",\"name\":\"");
-    Serial.print(commands[i].name);
-    Serial.print("\"}");
-
-    if (i < commandCount - 1) {
-      Serial.println(",");
-    } else {
-      Serial.println();
-    }
-  }
-
-  Serial.println("]}");
-  Serial.println("JSON_END");
-}
-
 // --- 0: POSICIÓN NEUTRA ---
 void PosicionNeutra() {
   Serial.println(F("[ESTADO] Neutro (Valores Base)"));
@@ -263,4 +180,87 @@ void mostrarMenu() {
   Serial.println(F(" 10: Risa          |  11: Triste"));
   Serial.println(F("--------------------------------------------------"));
   Serial.print(F("Seleccione una opción: "));
+}
+
+typedef void (*CommandFunction)();
+
+void ejecutarComando(int id) {
+  for (int i = 0; i < commandCount; i++) {
+    if (commands[i].id == id) {
+      commands[i].fn();
+      return;
+    }
+  }
+  Serial.println(F(" [!] Opción no válida."));
+}
+
+// --- -1: LISTAR COMANDOS ---
+void listarComandosJSON() {
+  Serial.println("JSON_BEGIN");
+  Serial.println("{\"commands\":[");
+
+  for (int i = 0; i < commandCount; i++) {
+    Serial.print("{\"id\":");
+    Serial.print(commands[i].id);
+    Serial.print(",\"name\":\"");
+    Serial.print(commands[i].name);
+    Serial.print("\"}");
+
+    if (i < commandCount - 1) {
+      Serial.println(",");
+    } else {
+      Serial.println();
+    }
+  }
+
+  Serial.println("]}");
+  Serial.println("JSON_END");
+}
+
+struct Command {
+  int id;
+  const char *name;
+  CommandFunction fn;
+};
+
+Command commands[] = {{-1, "Listar comandos", listarComandosJSON},
+                      {0, "Posición Neutra", PosicionNeutra},
+                      {1, "Modo Manual", modoManualContinuo},
+                      {2, "Sorprendido", GestoSorprendido},
+                      {3, "Furioso", GestoFurioso},
+                      {4, "Feliz", GestoFeliz},
+                      {5, "Parpadeo", GestoParpadeo},
+                      {6, "Guino Izquierdo", GuinoIzquierdo},
+                      {7, "Guino Derecho", GuinoDerecho},
+                      {8, "Dormir", GestoDormir},
+                      {9, "Sospechoso", Sospechoso},
+                      {10, "Risa", Risa},
+                      {11, "Triste", Triste}};
+
+const int commandCount = sizeof(commands) / sizeof(commands[0]);
+
+void setup() {
+  Serial.begin(9600);
+  Serial.setTimeout(50);
+
+  pca.begin();
+  pca.setPWMFreq(50);
+
+  // Posición inicial segura
+  PosicionNeutra();
+
+  Serial.println(F("\n===================================="));
+  Serial.println(F("    SISTEMA OPERATIVO HEAD R-ONE    "));
+  Serial.println(F("===================================="));
+  mostrarMenu();
+}
+
+void loop() {
+  if (Serial.available() > 0) {
+    int opcion = Serial.parseInt();
+
+    ejecutarComando(opcion);
+    limpiarBuffer();
+    mostrarMenu();
+  }
 }
