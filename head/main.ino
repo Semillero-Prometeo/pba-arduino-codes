@@ -8,6 +8,30 @@ Adafruit_PWMServoDriver pca = Adafruit_PWMServoDriver();
 #define SERVOMIN 150
 #define SERVOMAX 600
 
+typedef void (*CommandFunction)();
+
+struct Command {
+  int id;
+  const char *name;
+  CommandFunction fn;
+};
+
+Command commands[] = {{-1, "Listar comandos", listarComandosSerial},
+                      {0, "Posición Neutra", PosicionNeutra},
+                      {1, "Modo Manual", modoManualContinuo},
+                      {2, "Sorprendido", GestoSorprendido},
+                      {3, "Furioso", GestoFurioso},
+                      {4, "Feliz", GestoFeliz},
+                      {5, "Parpadeo", GestoParpadeo},
+                      {6, "Guino Izquierdo", GuinoIzquierdo},
+                      {7, "Guino Derecho", GuinoDerecho},
+                      {8, "Dormir", GestoDormir},
+                      {9, "Sospechoso", Sospechoso},
+                      {10, "Risa", Risa},
+                      {11, "Triste", Triste}};
+
+const int commandCount = sizeof(commands) / sizeof(commands[0]);
+
 void setup() {
   Serial.begin(9600);
   Serial.setTimeout(50);
@@ -28,51 +52,31 @@ void loop() {
   if (Serial.available() > 0) {
     int opcion = Serial.parseInt();
 
-    switch (opcion) {
-    case 0:
-      PosicionNeutra();
-      break;
-    case 1:
-      modoManualContinuo();
-      break;
-    case 2:
-      GestoSorprendido();
-      break;
-    case 3:
-      GestoFurioso();
-      break;
-    case 4:
-      GestoFeliz();
-      break;
-    case 5:
-      GestoParpadeo();
-      break;
-    case 6:
-      GuinoIzquierdo();
-      break;
-    case 7:
-      GuinoDerecho();
-      break;
-    case 8:
-      GestoDormir();
-      break;
-    case 9:
-      Sospechoso();
-      break;
-    case 10:
-      Risa();
-      break;
-    case 11:
-      Triste();
-      break;
-    default:
-      Serial.println(F(" [!] Opción no válida."));
-      break;
-    }
-
+    ejecutarComando(opcion);
     limpiarBuffer();
     mostrarMenu();
   }
+}
+
+void ejecutarComando(int id) {
+  for (int i = 0; i < commandCount; i++) {
+    if (commands[i].id == id) {
+      commands[i].fn();
+      return;
+    }
+  }
+  Serial.println(F(" [!] Opción no válida."));
+}
+
+// --- LISTAR COMANDOS ---
+void listarComandosSerial() {
+  Serial.println("COMMANDS_BEGIN");
+  for (int i = 0; i < commandCount; i++) {
+    Serial.print(commands[i].id);
+    Serial.print("|");
+    Serial.println(commands[i].name);
+  }
+  Serial.println("COMMANDS_END");
 }
 
 // --- 0: POSICIÓN NEUTRA ---
