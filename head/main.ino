@@ -16,6 +16,20 @@ struct Command {
   CommandFunction fn;
 };
 
+void listarComandosJSON();
+void PosicionNeutra();
+void modoManualContinuo();
+void GestoSorprendido();
+void GestoFurioso();
+void GestoFeliz();
+void GestoParpadeo();
+void GuinoIzquierdo();
+void GuinoDerecho();
+void GestoDormir();
+void Sospechoso();
+void Risa();
+void Triste();
+
 Command commands[] = {{-1, "Listar comandos", listarComandosJSON},
                       {0, "Posición Neutra", PosicionNeutra},
                       {1, "Modo Manual", modoManualContinuo},
