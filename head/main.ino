@@ -220,7 +220,6 @@ void mostrarMenu() {
   Serial.print(F("Seleccione una opción: "));
 }
 
-
 void ejecutarComando(int id) {
   for (int i = 0; i < commandCount; i++) {
     if (commands[i].id == id) {
@@ -274,8 +273,12 @@ void loop() {
   if (Serial.available() > 0) {
     int opcion = Serial.parseInt();
 
+    if (opcion != -1) {
+      mostrarMenu();
+      continue;
+    }
+
     ejecutarComando(opcion);
     limpiarBuffer();
-    mostrarMenu();
   }
 }
