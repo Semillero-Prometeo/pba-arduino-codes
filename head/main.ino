@@ -209,6 +209,9 @@ void limpiarBuffer() {
 }
 
 void mostrarMenu() {
+  Serial.println(F("\n===================================="));
+  Serial.println(F("    SISTEMA OPERATIVO HEAD R-ONE    "));
+  Serial.println(F("===================================="));
   Serial.println(F("\n----------- MENÚ DE CONTROL Head R-One -----------"));
   Serial.println(F(" 0: Neutro         |  1: MODO MANUAL"));
   Serial.println(F(" 2: Sorpresa       |  3: Furia"));
@@ -259,23 +262,14 @@ void setup() {
 
   pca.begin();
   pca.setPWMFreq(50);
-
-  // Posición inicial segura
-  PosicionNeutra();
-
-  Serial.println(F("\n===================================="));
-  Serial.println(F("    SISTEMA OPERATIVO HEAD R-ONE    "));
-  Serial.println(F("===================================="));
-  mostrarMenu();
 }
 
 void loop() {
   if (Serial.available() > 0) {
     int opcion = Serial.parseInt();
 
-    if (opcion != -1) {
+    if (!opcion) {
       mostrarMenu();
-      continue;
     }
 
     ejecutarComando(opcion);
