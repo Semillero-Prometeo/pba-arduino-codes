@@ -29,6 +29,8 @@ void GestoDormir();
 void Sospechoso();
 void Risa();
 void Triste();
+void Despertar();
+void OjoIzq();
 
 Command commands[] = {{-1, "Listar comandos", listarComandosJSON},
                       {0, "Posición Neutra", PosicionNeutra},
@@ -42,7 +44,9 @@ Command commands[] = {{-1, "Listar comandos", listarComandosJSON},
                       {8, "Dormir", GestoDormir},
                       {9, "Sospechoso", Sospechoso},
                       {10, "Risa", Risa},
-                      {11, "Triste", Triste}};
+                      {11, "Triste", Triste},
+                      {12, "Despertar", Despertar},
+                      {12, "Ojo Izquierdo", OjoIzq}};
 
 const int commandCount = sizeof(commands) / sizeof(commands[0]);
 
@@ -55,8 +59,8 @@ void PosicionNeutra() {
   pca.setPWM(3, 0, calcularPulso(380));
   pca.setPWM(8, 0, calcularPulso(0));
   pca.setPWM(10, 0, calcularPulso(450));
-  pca.setPWM(12, 0, calcularPulso(350));
-  pca.setPWM(13, 0, calcularPulso(430));
+  pca.setPWM(12, 0, calcularPulso(370));
+  pca.setPWM(13, 0, calcularPulso(350));
 }
 
 // --- 1: MODO MANUAL ---
@@ -101,7 +105,7 @@ void GestoSorprendido() {
   pca.setPWM(9, 0, calcularPulso(280));
   pca.setPWM(11, 0, calcularPulso(500));
   pca.setPWM(12, 0, calcularPulso(500));
-  pca.setPWM(13, 0, calcularPulso(520));
+  pca.setPWM(13, 0, calcularPulso(430));
   pca.setPWM(0, 0, calcularPulso(310));
   pca.setPWM(14, 0, calcularPulso(300));
   pca.setPWM(8, 0, calcularPulso(800));
@@ -114,15 +118,55 @@ void GestoFurioso() {
   pca.setPWM(9, 0, calcularPulso(500));
   pca.setPWM(10, 0, calcularPulso(350));
   pca.setPWM(11, 0, calcularPulso(280));
-  pca.setPWM(13, 0, calcularPulso(520));
+  pca.setPWM(13, 0, calcularPulso(350));
   pca.setPWM(14, 0, calcularPulso(300));
 }
 
 // --- 4: FELIZ ---
 void GestoFeliz() {
-  Serial.println(F("[GESTO] Feliz"));
-  pca.setPWM(9, 0, calcularPulso(260));
-  pca.setPWM(11, 0, calcularPulso(260));
+  Serial.println(F("[GESTO] Feliz - Movimiento de cuello suave"));
+
+  // 1. FIJAR EXPRESIÓN FACIAL (Cejas y Mejillas)
+  pca.setPWM(15, 0, calcularPulso(600));
+  pca.setPWM(1, 0, calcularPulso(600));
+  pca.setPWM(9, 0, calcularPulso(300));
+  pca.setPWM(11, 0, calcularPulso(450));
+
+  // 2. MOVER A LA IZQUIERDA (De 400 a 0) lentamente
+  for (int pos = 400; pos >= 0; pos -= 5) {
+    pca.setPWM(4, 0, calcularPulso(pos)); // Mueve cuello
+
+    // Simulación de habla: abre la boca en ciertos puntos del recorrido
+    if (pos % 100 == 0)
+      pca.setPWM(8, 0, calcularPulso(600));
+    if (pos % 50 == 0 && pos % 100 != 0)
+      pca.setPWM(8, 0, calcularPulso(0));
+
+    delay(20); // Controla la velocidad (más alto = más lento)
+  }
+
+  // 3. MOVER A LA DERECHA (De 0 a 800) lentamente
+  for (int pos = 0; pos <= 800; pos += 5) {
+    pca.setPWM(4, 0, calcularPulso(pos));
+
+    // Sigue moviendo la boca mientras gira
+    if (pos % 100 == 0)
+      pca.setPWM(8, 0, calcularPulso(600));
+    if (pos % 50 == 0 && pos % 100 != 0)
+      pca.setPWM(8, 0, calcularPulso(0));
+
+    delay(20);
+  }
+
+  // 4. REGRESAR AL CENTRO (De 800 a 400)
+  for (int pos = 800; pos >= 400; pos -= 5) {
+    pca.setPWM(4, 0, calcularPulso(pos));
+    delay(20);
+  }
+
+  // 5. CIERRE DE SEGURIDAD
+  pca.setPWM(8, 0, calcularPulso(0)); // Cierra boca al final
+  Serial.println(F(" -> Gesto finalizado en Neutro"));
 }
 
 // --- 5: PARPADEO ---
@@ -130,11 +174,11 @@ void GestoParpadeo() {
   Serial.println(F("[GESTO] Parpadeo"));
   pca.setPWM(0, 0, calcularPulso(520));
   pca.setPWM(14, 0, calcularPulso(520));
-  pca.setPWM(13, 0, calcularPulso(300));
-  pca.setPWM(12, 0, calcularPulso(300));
+  pca.setPWM(13, 0, calcularPulso(275));
+  pca.setPWM(12, 0, calcularPulso(250));
   delay(150);
-  pca.setPWM(12, 0, calcularPulso(500));
-  pca.setPWM(13, 0, calcularPulso(520));
+  pca.setPWM(12, 0, calcularPulso(450));
+  pca.setPWM(13, 0, calcularPulso(430));
   pca.setPWM(0, 0, calcularPulso(310));
   pca.setPWM(14, 0, calcularPulso(300));
 }
@@ -145,18 +189,18 @@ void GuinoIzquierdo() {
   pca.setPWM(0, 0, calcularPulso(520));
   pca.setPWM(14, 0, calcularPulso(520));
   delay(150);
-  pca.setPWM(0, 0, calcularPulso(310));
+  pca.setPWM(0, 0, calcularPulso(340));
   pca.setPWM(14, 0, calcularPulso(300));
 }
 
 // --- 7: GUIÑO DERECHO ---
 void GuinoDerecho() {
   Serial.println(F("[GESTO] Guiño Derecho"));
-  pca.setPWM(13, 0, calcularPulso(300));
-  pca.setPWM(12, 0, calcularPulso(300));
+  pca.setPWM(13, 0, calcularPulso(275));
+  pca.setPWM(12, 0, calcularPulso(250));
   delay(150);
-  pca.setPWM(12, 0, calcularPulso(500));
-  pca.setPWM(13, 0, calcularPulso(520));
+  pca.setPWM(12, 0, calcularPulso(430));
+  pca.setPWM(13, 0, calcularPulso(430));
 }
 
 // --- 8: DORMIR ---
@@ -164,8 +208,8 @@ void GestoDormir() {
   Serial.println(F("[GESTO] Dormir"));
   pca.setPWM(0, 0, calcularPulso(520));
   pca.setPWM(14, 0, calcularPulso(520));
-  pca.setPWM(13, 0, calcularPulso(300));
-  pca.setPWM(12, 0, calcularPulso(300));
+  pca.setPWM(13, 0, calcularPulso(275));
+  pca.setPWM(12, 0, calcularPulso(250));
 }
 
 // --- 9: SOSPECHOSO ---
@@ -173,7 +217,7 @@ void Sospechoso() {
   Serial.println(F("[GESTO] Sospechoso"));
   pca.setPWM(12, 0, calcularPulso(320));
   pca.setPWM(0, 0, calcularPulso(440));
-  pca.setPWM(13, 0, calcularPulso(400));
+  pca.setPWM(13, 0, calcularPulso(350));
   pca.setPWM(14, 0, calcularPulso(400));
   pca.setPWM(9, 0, calcularPulso(310));
   pca.setPWM(11, 0, calcularPulso(500));
@@ -197,6 +241,22 @@ void Triste() {
   pca.setPWM(6, 0, calcularPulso(340));
   pca.setPWM(11, 0, calcularPulso(500));
   pca.setPWM(9, 0, calcularPulso(280));
+}
+
+// --- 12: DESPERTAR
+void Despertar() {
+  Serial.println(F("[GESTO] Dormir"));
+  pca.setPWM(0, 0, calcularPulso(400));
+  pca.setPWM(14, 0, calcularPulso(400));
+  pca.setPWM(13, 0, calcularPulso(350));
+  pca.setPWM(12, 0, calcularPulso(370));
+}
+
+// --- 13: ojo cerrado ---
+void OjoIzq() {
+  Serial.println(F("[GESTO] Ojo Izq"));
+  pca.setPWM(14, 0, calcularPulso(520));
+  pca.setPWM(0, 0, calcularPulso(520));
 }
 
 // --- UTILIDADES ---
