@@ -52,19 +52,6 @@ const int commandCount = sizeof(commands) / sizeof(commands[0]);
 
 // --- 0: POSICIÓN NEUTRA ---
 void PosicionNeutra() {
-  Serial.println(F("[ESTADO] Neutro (Valores Base)"));
-  for (int i = 0; i < 16; i++) {
-    pca.setPWM(i, 0, calcularPulso(400));
-  }
-  pca.setPWM(3, 0, calcularPulso(380));
-  pca.setPWM(8, 0, calcularPulso(0));
-  pca.setPWM(10, 0, calcularPulso(450));
-  pca.setPWM(12, 0, calcularPulso(370));
-  pca.setPWM(13, 0, calcularPulso(350));
-}
-
-// --- 0: POSICIÓN NEUTRA ---
-void PosicionNeutra() {
   Serial.println(F("[ESTADO] Neutro (Valores Base Actualizados)"));
 
   // Establecemos un valor base general de 400 para todos los canales
